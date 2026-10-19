@@ -1,0 +1,55 @@
+:root {
+  --bg: #000000;
+  --surface: #0a0a0a;
+  --card: #111111;
+  --card-hover: #161616;
+  --border: #222222;
+  --border-focus: #444444;
+  --text: #ededed;
+  --text-muted: #888888;
+  --text-dim: #555555;
+  --accent: #ffffff;
+  --cyan: #38bdf8;
+  --emerald: #10b981;
+  --amber: #fbbf24;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
+}
+
+code, kbd, samp, pre {
+  font-family: 'Geist Mono', 'SF Mono', Menlo, Monaco, Consolas, monospace;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+::selection {
+  background: #333333;
+  color: #ffffff;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade {
+  animation: fadeIn 0.4s ease forwards;
+}
