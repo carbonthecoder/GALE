@@ -1,31 +1,27 @@
 import React from 'react';
 import { Box, Text } from 'ink';
 
-function flagEmoji(code) {
-  if (!code || code.length !== 2) return '';
-  const points = [...code.toUpperCase()].map(
-    (c) => 0x1f1e6 + c.charCodeAt(0) - 65,
-  );
-  return String.fromCodePoint(...points);
-}
+export default function CityList({ results, selectedIndex, width = 50 }) {
+  if (!results || results.length === 0) return null;
 
-export default function CityList({ results, selectedIndex }) {
   return (
-    <Box flexDirection="column" marginTop={1} width="60%">
+    <Box flexDirection="column" marginTop={1} width={width}>
       {results.map((city, i) => {
         const selected = i === selectedIndex;
+        const countryTag = city.country_code ? ` [${city.country_code.toUpperCase()}]` : '';
+        const region = city.admin1 ? `, ${city.admin1}` : '';
+        const country = city.country ? `, ${city.country}` : '';
+        const coords = ` (${Number(city.latitude).toFixed(2)}, ${Number(city.longitude).toFixed(2)})`;
+
         return (
-          <Box key={`${i}`}>
-            <Text
-              color={selected ? 'yellowBright' : 'white'}
-              bold={selected}
-            >
-              {selected ? '  ›' : '   '} {city.name}
-              {city.admin1 ? `, ${city.admin1}` : ''}
-              {city.country ? `, ${city.country}` : ''}
-              {flagEmoji(city.country_code)
-                ? `  ${flagEmoji(city.country_code)}`
-                : ''}
+          <Box key={`${i}`} paddingLeft={1}>
+            <Text color={selected ? '#ffffff' : '#666'} bold={selected}>
+              {selected ? '> ' : '  '}
+              {city.name}
+              {region}
+              {country}
+              {countryTag}
+              <Text color="#444">{coords}</Text>
             </Text>
           </Box>
         );

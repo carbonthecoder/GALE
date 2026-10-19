@@ -1,49 +1,41 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Text, useInput } from 'ink';
-import Header from './header.jsx';
+import { Logo } from './logo.jsx';
 import Spinner from './spinner.jsx';
 
-const WEATHER = {
-  0: { emoji: '\u2600\uFE0F', desc: 'clear' },
-  1: { emoji: '\uD83C\uDF24\uFE0F', desc: 'mostly clear' },
-  2: { emoji: '\u26C5', desc: 'partly cloudy' },
-  3: { emoji: '\u2601\uFE0F', desc: 'overcast' },
-  45: { emoji: '\uD83C\uDF2B\uFE0F', desc: 'fog' },
-  48: { emoji: '\uD83C\uDF2B\uFE0F', desc: 'rime fog' },
-  51: { emoji: '\uD83C\uDF26\uFE0F', desc: 'light drizzle' },
-  53: { emoji: '\uD83C\uDF26\uFE0F', desc: 'drizzle' },
-  55: { emoji: '\uD83C\uDF26\uFE0F', desc: 'drizzle' },
-  56: { emoji: '\uD83C\uDF27\uFE0F', desc: 'freezing drizzle' },
-  57: { emoji: '\uD83C\uDF27\uFE0F', desc: 'freezing drizzle' },
-  61: { emoji: '\uD83C\uDF26\uFE0F', desc: 'light rain' },
-  63: { emoji: '\uD83C\uDF27\uFE0F', desc: 'rain' },
-  65: { emoji: '\uD83C\uDF27\uFE0F', desc: 'heavy rain' },
-  66: { emoji: '\uD83C\uDF27\uFE0F', desc: 'freezing rain' },
-  67: { emoji: '\uD83C\uDF27\uFE0F', desc: 'freezing rain' },
-  71: { emoji: '\uD83C\uDF28\uFE0F', desc: 'light snow' },
-  73: { emoji: '\uD83C\uDF28\uFE0F', desc: 'snow' },
-  75: { emoji: '\u2744\uFE0F', desc: 'heavy snow' },
-  77: { emoji: '\u2744\uFE0F', desc: 'snow grains' },
-  80: { emoji: '\uD83C\uDF26\uFE0F', desc: 'rain showers' },
-  81: { emoji: '\uD83C\uDF27\uFE0F', desc: 'rain showers' },
-  82: { emoji: '\uD83C\uDF27\uFE0F', desc: 'rain showers' },
-  85: { emoji: '\uD83C\uDF28\uFE0F', desc: 'snow showers' },
-  86: { emoji: '\u2744\uFE0F', desc: 'snow showers' },
-  95: { emoji: '\u26C8\uFE0F', desc: 'thunderstorm' },
-  96: { emoji: '\u26C8\uFE0F', desc: 'thunderstorm' },
-  99: { emoji: '\u26C8\uFE0F', desc: 'thunderstorm' },
+const WEATHER_DESC = {
+  0: { badge: 'CLEAR', desc: 'Clear sky' },
+  1: { badge: 'CLEAR', desc: 'Mainly clear' },
+  2: { badge: 'CLOUDY', desc: 'Partly cloudy' },
+  3: { badge: 'OVERCAST', desc: 'Overcast' },
+  45: { badge: 'FOG', desc: 'Fog' },
+  48: { badge: 'FOG', desc: 'Depositing rime fog' },
+  51: { badge: 'DRIZZLE', desc: 'Light drizzle' },
+  53: { badge: 'DRIZZLE', desc: 'Moderate drizzle' },
+  55: { badge: 'DRIZZLE', desc: 'Dense drizzle' },
+  56: { badge: 'DRIZZLE', desc: 'Freezing drizzle' },
+  57: { badge: 'DRIZZLE', desc: 'Dense freezing drizzle' },
+  61: { badge: 'RAIN', desc: 'Slight rain' },
+  63: { badge: 'RAIN', desc: 'Moderate rain' },
+  65: { badge: 'HEAVY RAIN', desc: 'Heavy rain' },
+  66: { badge: 'RAIN', desc: 'Freezing rain' },
+  67: { badge: 'HEAVY RAIN', desc: 'Heavy freezing rain' },
+  71: { badge: 'SNOW', desc: 'Slight snowfall' },
+  73: { badge: 'SNOW', desc: 'Moderate snowfall' },
+  75: { badge: 'HEAVY SNOW', desc: 'Heavy snowfall' },
+  77: { badge: 'SNOW', desc: 'Snow grains' },
+  80: { badge: 'SHOWERS', desc: 'Slight rain showers' },
+  81: { badge: 'SHOWERS', desc: 'Moderate rain showers' },
+  82: { badge: 'SHOWERS', desc: 'Violent rain showers' },
+  85: { badge: 'SNOW', desc: 'Slight snow showers' },
+  86: { badge: 'SNOW', desc: 'Heavy snow showers' },
+  95: { badge: 'STORM', desc: 'Thunderstorm' },
+  96: { badge: 'STORM', desc: 'Thunderstorm with slight hail' },
+  99: { badge: 'STORM', desc: 'Thunderstorm with heavy hail' },
 };
 
 function getWeather(code) {
-  return WEATHER[code] || { emoji: '?', desc: 'unknown' };
-}
-
-function tempColor(temp) {
-  if (temp >= 35) return 'red';
-  if (temp >= 25) return 'yellowBright';
-  if (temp >= 15) return 'white';
-  if (temp >= 5) return 'cyan';
-  return 'blue';
+  return WEATHER_DESC[code] || { badge: 'WEATHER', desc: 'Unknown' };
 }
 
 function windDir(deg) {
@@ -51,24 +43,11 @@ function windDir(deg) {
   return dirs[Math.round(deg / 45) % 8];
 }
 
-function flagEmoji(code) {
-  if (!code || code.length !== 2) return '';
-  const points = [...code.toUpperCase()].map(
-    (c) => 0x1f1e6 + c.charCodeAt(0) - 65,
-  );
-  return String.fromCodePoint(...points);
-}
-
-function formatTime(timeStr) {
-  const parts = timeStr.split('T')[1].split(':');
-  return `${parts[0]}:${parts[1]}`;
-}
-
 function Detail({ label, value }) {
   return (
     <Box flexDirection="column" alignItems="center">
-      <Text dimColor>{label}</Text>
-      <Text>{value}</Text>
+      <Text color="#666">{label}</Text>
+      <Text color="#ededed" bold>{value}</Text>
     </Box>
   );
 }
@@ -78,8 +57,8 @@ export default function WeatherDashboard({ city, onBack }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useInput((input) => {
-    if (input === 'b' || input === 'q') onBack();
+  useInput((input, key) => {
+    if (key.escape || input === 'b' || input === 'q') onBack();
   });
 
   useEffect(() => {
@@ -114,32 +93,24 @@ export default function WeatherDashboard({ city, onBack }) {
 
   if (loading) {
     return (
-      <Box
-        flexDirection="column"
-        alignItems="center"
-        justifyContent="center"
-        minHeight="100%"
-      >
-        <Header />
-        <Spinner text="fetching weather..." />
+      <Box flexDirection="column" alignItems="center" justifyContent="center">
+        <Logo />
+        <Box marginTop={1}>
+          <Spinner text={`fetching weather for ${city.name}...`} />
+        </Box>
       </Box>
     );
   }
 
   if (error) {
     return (
-      <Box
-        flexDirection="column"
-        alignItems="center"
-        justifyContent="center"
-        minHeight="100%"
-      >
-        <Header />
+      <Box flexDirection="column" alignItems="center" justifyContent="center">
+        <Logo />
         <Box marginTop={1}>
-          <Text color="red">! {error}</Text>
+          <Text color="#f44747">x {error}</Text>
         </Box>
         <Box marginTop={1}>
-          <Text dimColor>b: back</Text>
+          <Text color="#666">press [esc] to go back</Text>
         </Box>
       </Box>
     );
@@ -153,9 +124,7 @@ export default function WeatherDashboard({ city, onBack }) {
   const windSpeed = current.wind_speed_10m;
   const windDirStr = windDir(current.wind_direction_10m);
   const uv = current.uv_index;
-  const pressure = current.surface_pressure
-    ? Math.round(current.surface_pressure)
-    : null;
+  const pressure = current.surface_pressure ? Math.round(current.surface_pressure) : null;
 
   const now = new Date();
   const localHour = parseInt(
@@ -180,59 +149,66 @@ export default function WeatherDashboard({ city, onBack }) {
   const hCodes = hourly.weather_code.slice(startIdx, endIdx);
   const hPrecip = hourly.precipitation_probability.slice(startIdx, endIdx);
 
+  const countryTag = city.country_code ? ` [${city.country_code.toUpperCase()}]` : '';
+
   return (
-    <Box
-      flexDirection="column"
-      alignItems="center"
-      justifyContent="center"
-      minHeight="100%"
-    >
-      <Header />
+    <Box flexDirection="column" alignItems="center" justifyContent="center">
+      <Logo />
 
-      <Box flexDirection="column" alignItems="center" marginBottom={1}>
-        <Text bold>
-          {w.emoji}  {city.name}
-          {city.country ? `, ${city.country}` : ''}
-          {flagEmoji(city.country_code)
-            ? `  ${flagEmoji(city.country_code)}`
-            : ''}
+      <Box marginTop={1} flexDirection="column" alignItems="center">
+        <Text color="#ededed" bold>
+          {city.name}{city.country ? `, ${city.country}` : ''}{countryTag}
+        </Text>
+        <Text color="#555">
+          {Number(city.latitude).toFixed(2)}N, {Number(city.longitude).toFixed(2)}E
         </Text>
       </Box>
 
-      <Box flexDirection="column" alignItems="center" marginBottom={1}>
-        <Text bold color={tempColor(temp)}>
-          {temp}°
+      {/* Main Temperature Card */}
+      <Box
+        marginTop={1}
+        flexDirection="column"
+        alignItems="center"
+        borderStyle="round"
+        borderColor="#333"
+        paddingX={3}
+        paddingY={0}
+      >
+        <Text color="#ededed" bold>
+          {temp} C
         </Text>
-        <Text>
-          feels like {feels}°  ·  {w.desc}
+        <Text color="#888">
+          feels like {feels} C  |  [{w.badge}] {w.desc}
         </Text>
       </Box>
 
-      <Box gap={4} marginBottom={1}>
-        <Detail label="wind" value={`${windDirStr} ${windSpeed}`} />
-        <Detail label="humidity" value={`${humidity}%`} />
-        <Detail label="uv" value={uv} />
-        {pressure && <Detail label="pressure" value={`${pressure}hPa`} />}
+      {/* Weather Stats Bar */}
+      <Box gap={4} marginTop={1}>
+        <Detail label="WIND" value={`${windDirStr} ${windSpeed} km/h`} />
+        <Detail label="HUMIDITY" value={`${humidity}%`} />
+        <Detail label="UV INDEX" value={uv} />
+        {pressure && <Detail label="PRESSURE" value={`${pressure} hPa`} />}
       </Box>
 
+      {/* Hourly Forecast */}
       {hours.length > 0 && (
-        <Box flexDirection="column" alignItems="center" marginBottom={1}>
-          <Text bold dimColor>
-            ── hourly ──
+        <Box flexDirection="column" alignItems="center" marginTop={1}>
+          <Text color="#555" bold>
+            -- HOURLY OUTLOOK --
           </Text>
-          <Box gap={2}>
+          <Box gap={2} marginTop={0}>
             {hours.map((t, i) => {
               const h = parseInt(t.split('T')[1].split(':')[0], 10);
-              const icon = getWeather(hCodes[i]).emoji;
+              const badge = getWeather(hCodes[i]).badge;
               return (
                 <Box key={i} flexDirection="column" alignItems="center">
-                  <Text dimColor>
-                    {String(h).padStart(2, '0')}:00
-                  </Text>
-                  <Text bold>{Math.round(hTemps[i])}°</Text>
-                  <Text>{icon}</Text>
-                  {hPrecip[i] > 0 && (
-                    <Text dimColor>{hPrecip[i]}%</Text>
+                  <Text color="#666">{String(h).padStart(2, '0')}:00</Text>
+                  <Text color="#ededed" bold>{Math.round(hTemps[i])} C</Text>
+                  <Text color="#888">{badge.slice(0, 5)}</Text>
+                  {hPrecip[i] > 0 ? (
+                    <Text color="#555">{hPrecip[i]}%</Text>
+                  ) : (
+                    <Text color="#333">0%</Text>
                   )}
                 </Box>
               );
@@ -241,38 +217,35 @@ export default function WeatherDashboard({ city, onBack }) {
         </Box>
       )}
 
-      <Box flexDirection="column" alignItems="center" marginBottom={1}>
-        <Text bold dimColor>
-          ── 7 days ──
+      {/* 7-Day Forecast */}
+      <Box flexDirection="column" alignItems="center" marginTop={1}>
+        <Text color="#555" bold>
+          -- 7-DAY OUTLOOK --
         </Text>
-        <Box gap={1}>
-          {daily.time.map((date, i) => {
-            const day = new Date(date + 'T00:00:00').toLocaleDateString(
-              'en-US',
-              { weekday: 'short' },
-            );
-            const icon = getWeather(daily.weather_code[i]).emoji;
+        <Box gap={2} marginTop={0}>
+          {daily.time.slice(0, 7).map((date, i) => {
+            const day = new Date(date + 'T00:00:00').toLocaleDateString('en-US', {
+              weekday: 'short',
+            });
+            const badge = getWeather(daily.weather_code[i]).badge;
             const high = Math.round(daily.temperature_2m_max[i]);
             const low = Math.round(daily.temperature_2m_min[i]);
             const today = i === 0;
+
             return (
-              <Box
-                key={i}
-                flexDirection="column"
-                alignItems="center"
-              >
-                <Text bold={today} dimColor={!today}>
+              <Box key={i} flexDirection="column" alignItems="center">
+                <Text color={today ? '#ededed' : '#666'} bold={today}>
                   {day}
                 </Text>
-                <Text bold color={tempColor(high)}>
-                  {high}°
+                <Text color="#ededed" bold>
+                  {high} C
                 </Text>
-                <Text dimColor>{low}°</Text>
-                <Text>{icon}</Text>
-                {daily.precipitation_probability_max[i] > 0 && (
-                  <Text dimColor>
-                    {daily.precipitation_probability_max[i]}%
-                  </Text>
+                <Text color="#555">{low} C</Text>
+                <Text color="#888">{badge.slice(0, 5)}</Text>
+                {daily.precipitation_probability_max[i] > 0 ? (
+                  <Text color="#555">{daily.precipitation_probability_max[i]}%</Text>
+                ) : (
+                  <Text color="#333">0%</Text>
                 )}
               </Box>
             );
@@ -280,8 +253,11 @@ export default function WeatherDashboard({ city, onBack }) {
         </Box>
       </Box>
 
+      {/* Footer */}
       <Box marginTop={1}>
-        <Text dimColor>b: back  q: quit</Text>
+        <Text color="#555">
+          <Text color="#888">[esc]</Text> search again  |  <Text color="#888">[q]</Text> quit
+        </Text>
       </Box>
     </Box>
   );

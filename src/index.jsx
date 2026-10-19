@@ -1,7 +1,14 @@
 import React from 'react';
 import { render } from 'ink';
+import { execSync } from 'child_process';
 import App from './app.jsx';
 import { startServer } from './server.js';
+
+if (process.platform === 'win32') {
+  try {
+    execSync('chcp 65001', { stdio: 'ignore' });
+  } catch {}
+}
 
 const args = process.argv.slice(2);
 if (

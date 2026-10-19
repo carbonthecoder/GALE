@@ -1,10 +1,12 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { Box, Text, useInput } from 'ink';
-import Header from './components/header.jsx';
+import { Logo } from './components/logo.jsx';
 import Spinner from './components/spinner.jsx';
 import SearchBox from './components/search.jsx';
 import CityList from './components/cityList.jsx';
 import WeatherDashboard from './components/weather.jsx';
+
+const TAGLINE = 'minimalist weather terminal · powered by open-meteo';
 
 export default function App() {
   const [query, setQuery] = useState('');
@@ -15,6 +17,8 @@ export default function App() {
   const [searching, setSearching] = useState(false);
   const [searchError, setSearchError] = useState(null);
   const requestId = useRef(0);
+
+  const boxWidth = 56;
 
   useInput((input, key) => {
     if (phase !== 'search') return;
@@ -46,7 +50,7 @@ export default function App() {
     setSelectedIndex(0);
     setSearchError(null);
 
-    if (value.length < 2) {
+    if (value.trim().length < 2) {
       setResults([]);
       return;
     }
@@ -55,7 +59,7 @@ export default function App() {
     try {
       const url =
         'https://geocoding-api.open-meteo.com/v1/search?' +
-        `name=${encodeURIComponent(value)}&count=10&language=en&format=json`;
+        `name=${encodeURIComponent(value.trim())}&count=6&language=en&format=json`;
       const res = await fetch(url);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
@@ -81,57 +85,49 @@ export default function App() {
 
   if (phase === 'weather' && selectedCity) {
     return (
-      <Box
-        flexDirection="column"
-        alignItems="center"
-        justifyContent="center"
-        minHeight="100%"
-        width="100%"
-      >
+      <Box flexDirection="column" alignItems="center" justifyContent="center" minHeight="100%" width="100%">
         <WeatherDashboard city={selectedCity} onBack={handleBack} />
       </Box>
     );
   }
 
   return (
-    <Box
-      flexDirection="column"
-      alignItems="center"
-      justifyContent="center"
-      minHeight="100%"
-      width="100%"
-    >
-      <Header />
+    <Box flexDirection="column" alignItems="center" justifyContent="center" minHeight="100%" width="100%">
+      <Logo />
+      <Box marginTop={1}>
+        <Text color="#ededed">{TAGLINE}</Text>
+      </Box>
+      <Text color="#555">zero api keys · zero tracking · 10,000+ cities</Text>
 
-      <SearchBox value={query} onChange={handleChange} />
+      <Box marginTop={2} flexDirection="column" alignItems="center">
+        <SearchBox value={query} onChange={handleChange} width={boxWidth} />
+      </Box>
 
-      {searching && query.length >= 2 && (
+      {searching && (
         <Box marginTop={1}>
-          <Spinner text="searching..." />
+          <Spinner text="searching locations..." />
         </Box>
       )}
 
       {searchError && (
         <Box marginTop={1}>
-          <Text color="red">! {searchError}</Text>
+          <Text color="#f44747">x {searchError}</Text>
         </Box>
       )}
 
-      {results.length > 0 && (
-        <CityList results={results} selectedIndex={selectedIndex} />
-      )}
+      <CityList results={results} selectedIndex={selectedIndex} width={boxWidth} />
 
-      {results.length === 0 && query.length >= 2 && !searching && !searchError && (
-        <Box marginTop={1}>
-          <Text dimColor>~ no cities found ~</Text>
-        </Box>
-      )}
-
-      <Box marginTop={1}>
-        <Text dimColor>
-          type ·{' '}
-          {results.length > 0 ? '\u2191\u2193 navigate \u00B7 ' : ''}
-          enter select · esc clear
+      <Box marginTop={2}>
+        <Text color="#555">
+          {results.length > 0 ? (
+            <>
+              <Text color="#888">[up/down]</Text> choose  |  <Text color="#888">[enter]</Text> view  |  <Text color="#888">[esc]</Text> clear
+            </>
+          ) : (
+            <>
+              <Text color="#888">[type]</Text> city name  |  <Text color="#888">[ctrl+c]</Text> quit
+            </>
+          )}
         </Text>
       </Box>
     </Box>

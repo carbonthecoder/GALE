@@ -1,20 +1,15 @@
 import React from 'react';
-import { Box, Text } from 'ink';
 import TextInput from 'ink-text-input';
+import { FramedInput } from './framed-input.jsx';
 
-export default function SearchBox({ value, onChange }) {
+export default function SearchBox({ value, onChange, width = 50 }) {
   return (
-    <Box flexDirection="column" alignItems="center" width="60%">
-      <Box>
-        <Text bold color="yellowBright">
-          {'› '}
-        </Text>
-        <TextInput
-          value={value}
-          onChange={onChange}
-          placeholder="search for a city..."
-        />
-      </Box>
-    </Box>
+    <FramedInput title="Search City" width={width}>
+      <TextInput
+        value={value}
+        onChange={onChange}
+        placeholder="type city name (e.g. London, Tokyo, New York)..."
+      />
+    </FramedInput>
   );
 }
