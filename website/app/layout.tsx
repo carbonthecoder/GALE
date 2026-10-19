@@ -1,46 +1,44 @@
-import type { Metadata, Viewport } from 'next';
-import './globals.css';
-
-export const metadata: Metadata = {
-  title: 'GALE — Minimalist Weather TUI',
-  description: 'Minimalist weather TUI powered by Open-Meteo. Zero API keys, zero tracking.',
-  keywords: ['weather', 'tui', 'cli', 'open-meteo', 'terminal', 'minimalist', 'gale'],
-  authors: [{ name: 'carbonthecoder', url: 'https://github.com/carbonthecoder' }],
-  openGraph: {
-    title: 'GALE — Minimalist Weather TUI',
-    description: 'Minimalist weather TUI powered by Open-Meteo. Zero API keys, zero tracking.',
-    url: 'https://github.com/carbonthecoder/GALE',
-    siteName: 'GALE',
-    type: 'website',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'GALE — Minimalist Weather TUI',
-    description: 'Minimalist weather TUI powered by Open-Meteo. Zero API keys, zero tracking.',
-  },
-};
+import type { Metadata, Viewport } from 'next'
+import './globals.css'
 
 export const viewport: Viewport = {
   themeColor: '#000000',
-  colorScheme: 'dark',
-};
+}
+
+export const metadata: Metadata = {
+  title: 'GALE — Minimalist Weather TUI',
+  description: 'Instant weather forecasts from Open-Meteo directly in your terminal. Zero API keys, zero tracking.',
+  openGraph: {
+    title: 'GALE — Minimalist Weather TUI',
+    description: 'Instant weather forecasts from Open-Meteo directly in your terminal.',
+    type: 'website',
+  },
+}
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" data-theme="dark" suppressHydrationWarning>
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&family=Geist:wght@300;400;500;600;700&display=swap"
-          rel="stylesheet"
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                var saved = localStorage.getItem('gale-theme');
+                if (saved === 'light' || saved === 'dark') {
+                  document.documentElement.setAttribute('data-theme', saved);
+                } else {
+                  document.documentElement.setAttribute('data-theme', 'dark');
+                }
+              } catch (e) {}
+            `,
+          }}
         />
       </head>
       <body>{children}</body>
     </html>
-  );
+  )
 }
