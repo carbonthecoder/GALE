@@ -1,0 +1,8 @@
+node_modules/
+dist/
+website/node_modules/
+website/.next/
+website/out/
+.env*.local
+*.log
+.DS_Store

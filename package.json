@@ -1,0 +1,36 @@
+{
+  "name": "gale",
+  "version": "1.0.0",
+  "description": "GALE — Minimalist weather TUI powered by Open-Meteo.",
+  "type": "module",
+  "bin": {
+    "gale": "./dist/cli.mjs",
+    "squall": "./dist/cli.mjs"
+  },
+  "scripts": {
+    "build": "node build.mjs",
+    "start": "node dist/cli.mjs",
+    "dev": "node build.mjs && node dist/cli.mjs",
+    "web": "node dist/cli.mjs --web",
+    "website:dev": "npm --prefix website run dev",
+    "website:build": "npm --prefix website run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/carbonthecoder/GALE.git"
+  },
+  "author": "carbonthecoder",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/carbonthecoder/GALE/issues"
+  },
+  "homepage": "https://github.com/carbonthecoder/GALE#readme",
+  "dependencies": {
+    "ink": "^4.4.0",
+    "ink-text-input": "^5.0.1",
+    "react": "^18.2.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.20.0"
+  }
+}
