@@ -59,7 +59,7 @@ export default function WeatherDashboard({ city, onBack }) {
 
   useInput((input, key) => {
     if (key.escape || input === 'b' || input === 'q') onBack();
-  });
+  }, { isActive: Boolean(process.stdin.isTTY) });
 
   useEffect(() => {
     setLoading(true);

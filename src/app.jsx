@@ -42,7 +42,7 @@ export default function App() {
         setPhase('weather');
       }
     }
-  });
+  }, { isActive: Boolean(process.stdin.isTTY) });
 
   const handleChange = useCallback(async (value) => {
     const id = ++requestId.current;
